@@ -34,9 +34,19 @@ app.get('/users/:id', async (req, res) => {
 
 app.put('/users/:id', async (req, res) => {
 
-  const { name, email, password } = req.body;
+  // const { name, email, password } = req.body;
 
-  await User.update({ name, email, password},
+  // await User.update({ name, email, password},
+  //             { where: {id: req.params.id} }
+  //             ).then((rowsUpdated) => {
+  //               console.log(rowsUpdated)
+  //               res.json()
+  //             })
+  //             .catch(erro => res.send(err))
+
+  // OU 
+  
+  await User.update(req.body,
               { where: {id: req.params.id} }
               ).then((rowsUpdated) => {
                 console.log(rowsUpdated)
