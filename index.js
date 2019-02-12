@@ -8,28 +8,19 @@ const { User } = require('./app/models');
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
-//User.create({ name: 'Reginaldo', email: 'reginaldolribeiro@gmail.com', password: '123456'});
-
-app.get('/', (req, res) => {
-  res.send('Hello World!');
-});
-
-//Lista todos
-app.get('/users', (req, res) => {
-  User.findAll()
+app.get('/users', async (req, res) => {
+  await User.findAll()
     .then(users => res.json(users))
     .catch(err => res.send(err));
 });
 
-//Criar
-app.post('/users', (req, res) => {
-  const user = User.create(req.body);
+app.post('/users', async (req, res) => {
+  const user = await User.create(req.body);
   res.json(user);
 }); 
 
-//Buscar
-app.get('/users/:id', (req, res) => {
-  User.findById(req.params.id)
+app.get('/users/:id', async (req, res) => {
+  await User.findById(req.params.id)
     .then(user => {
       console.log("User not found.");
       if(!user) res.status(404).send;
@@ -41,12 +32,11 @@ app.get('/users/:id', (req, res) => {
     });
 }); 
 
-//Editar
-app.put('/users/:id', (req, res) => {
+app.put('/users/:id', async (req, res) => {
 
   const { name, email, password } = req.body;
 
-  User.update({ name, email, password},
+  await User.update({ name, email, password},
               { where: {id: req.params.id} }
               ).then((rowsUpdated) => {
                 console.log(rowsUpdated)
@@ -55,18 +45,16 @@ app.put('/users/:id', (req, res) => {
               .catch(erro => res.send(err))
 }); 
 
-//Deletar
-app.delete('/users/:id', (req, res) => {
-  const id = req.params.id;
-  User.destroy({
-    where: { id: id}
+app.delete('/users/:id', async (req, res) => {
+  console.log("Deletando o usuario " + req.params.id);
+  await User.destroy({
+    where: { id: req.params.id }
   })
-  .then(res.status(204).send)
-}); 
-
-app.post('/register', async (req, res) => {
-  const user = await User.create(req.body);
-  res.json(user);
+  .then(deletedUsers => {
+    console.log(`Usuario deletado ${deletedUsers}`)
+    return res.status(204).send()
+  })  
 });
+
 
 app.listen(3000);
